@@ -74,21 +74,21 @@ public struct PresentationSourceViewLink<
     }
 
     public var body: some View {
-        PresentationLinkAdapter(
-            transition: transition,
-            isPresented: $isPresented
-        ) {
-            destination
-        } content: {
-            Button {
+    PresentationLinkAdapter(
+        transition: transition,
+        isPresented: $isPresented
+    ) {
+        destination
+    } content: {
+        label
+            .contentShape(Rectangle()) // rende tutta l'area tappabile
+            .onTapGesture {
                 withAnimation(animation) {
                     isPresented.toggle()
                 }
-            } label: {
-                label
             }
-        }
     }
+}
 }
 
 @available(iOS 14.0, *)
