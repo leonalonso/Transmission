@@ -33,6 +33,9 @@ class ViewControllerReader: UIView {
 class TransitionSourceView<Content: View>: ViewControllerReader {
 
     var hostingView: HostingView<Content>?
+    
+    // NEW: Static property to force a fixed width
+    static var forcedWidth: CGFloat? = nil
 
     init(
         onDidMoveToWindow: @escaping (UIViewController?) -> Void,
@@ -55,14 +58,27 @@ class TransitionSourceView<Content: View>: ViewControllerReader {
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        hostingView?.sizeThatFits(size) ?? super.sizeThatFits(size)
+        // Use forced width if set, falls back to normal sizing
+        if let forcedWidth = Self.forcedWidth {
+            var fixedSize = hostingView?.sizeThatFits(CGSize(width: forcedWidth, height: size.height)) ?? super.sizeThatFits(size)
+            fixedSize.width = forcedWidth
+            return fixedSize
+        }
+        return hostingView?.sizeThatFits(size) ?? super.sizeThatFits(size)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        hostingView?.frame = bounds
+        if let forcedWidth = Self.forcedWidth {
+            // Center horizontally if the bounds are wider than forcedWidth
+            let h = bounds.height
+            let y: CGFloat = 0
+            let x: CGFloat = (bounds.width - forcedWidth) / 2
+            hostingView?.frame = CGRect(x: x, y: y, width: forcedWidth, height: h)
+        } else {
+            hostingView?.frame = bounds
+        }
     }
 }
-
 
 #endif
