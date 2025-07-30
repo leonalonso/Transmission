@@ -6,13 +6,12 @@
 
 import SwiftUI
 
-// --- FIX: Static property su classe NON generica ---
-class TransitionSourceViewSettings {
-    static var forcedWidth: CGFloat? = nil
+// --- AGGIUNGI QUESTA CLASSE QUI ---
+public class TransitionSourceViewSettings {
+    public static var forcedWidth: CGFloat? = nil
 }
 
 class ViewControllerReader: UIView {
-
     let onDidMoveToWindow: (UIViewController?) -> Void
 
     init(onDidMoveToWindow: @escaping (UIViewController?) -> Void) {
@@ -36,7 +35,6 @@ class ViewControllerReader: UIView {
 }
 
 class TransitionSourceView<Content: View>: ViewControllerReader {
-
     var hostingView: HostingView<Content>?
 
     init(
@@ -60,7 +58,6 @@ class TransitionSourceView<Content: View>: ViewControllerReader {
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        // Usa la property statica di TransitionSourceViewSettings
         if let forcedWidth = TransitionSourceViewSettings.forcedWidth {
             var fixedSize = hostingView?.sizeThatFits(CGSize(width: forcedWidth, height: size.height)) ?? super.sizeThatFits(size)
             fixedSize.width = forcedWidth
@@ -72,7 +69,6 @@ class TransitionSourceView<Content: View>: ViewControllerReader {
     override func layoutSubviews() {
         super.layoutSubviews()
         if let forcedWidth = TransitionSourceViewSettings.forcedWidth {
-            // Center horizontally if the bounds are wider than forcedWidth
             let h = bounds.height
             let y: CGFloat = 0
             let x: CGFloat = (bounds.width - forcedWidth) / 2
